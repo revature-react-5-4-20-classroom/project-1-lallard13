@@ -36,9 +36,7 @@ export class HomeComponent extends React.Component<IHomeComponentProps,any> {
                     <Route path="/home/profile"> 
                         <ProfileComponent loggedInUser={this.props.loggedInUser}/>
                     </Route>
-                    <Route path="/home/reimbursements">
-                        <ReimbursementComponent loggedInUser={this.props.loggedInUser}/>
-                    </Route>
+                    <Route path='/home/reimbursements' render={(props=>{return <ReimbursementComponent loggedInUser={this.props.loggedInUser} {...props} />})}/>
                     {/* This path only accessible for admin and finance-manager */}
                     <Route path="/home/users">
                         <UsersComponent />

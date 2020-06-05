@@ -35,6 +35,7 @@ export async function getUserById(id: number) : Promise<User> {
     try {
         const response = await reimbursementClient.get(`/users/${id}`);
         const {userId, username, password, firstName, lastName, email, role} = response.data;
+        console.log(response.data);
         return new User(userId, username, password, firstName, lastName, email, role);
     } catch(e) {
         // Implement error later
@@ -56,11 +57,13 @@ export async function submitReimbursement(reimbRequest: Reimbursement) : Promise
 
 // get reimbursements by user (employee/finance manager)
 // takes id, returns array of reimbursements
-export async function getReimbursementsByUserId(id: number) : Promise<Reimbursement[]> {
+export async function getReimbursementsByUserId(id: number | undefined) : Promise<Reimbursement[]> {
     try {
         const response = await reimbursementClient.get(`reimbursements/author/userId/${id}`);
         return response.data.map((reimbObj: any) => {
-            const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = response.data;
+            console.log(reimbObj);
+            const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = reimbObj;
+            console.log(reimbursementId);
             return new Reimbursement(reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type);
         })
     } catch(e) {
