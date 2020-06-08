@@ -174,7 +174,7 @@ export class UpdateUserComponent extends React.Component<IUpdateUserComponentPro
                             <Input onChange={this.handleChange} id="LastName" name="newLastName" value={this.state.newLastName} type="text" placeholder="Enter your last name"/>
                         </FormGroup>
                         <FormGroup>
-                            <Label for="email">Username</Label>
+                            <Label for="email">Email</Label>
                             <Input onChange={this.handleChange} id="Email" name="newEmail" value={this.state.newEmail} type="text" placeholder="Enter your email"/>
                         </FormGroup>
 
