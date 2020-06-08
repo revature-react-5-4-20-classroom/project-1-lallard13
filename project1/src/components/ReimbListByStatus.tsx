@@ -105,7 +105,7 @@ export class ReimbListByStatus extends React.Component<IReimbListByStatusProps, 
                                         {/* Offer update button for finance managers. This will change the state to create the update modal */}
                                         <Col xs="auto">
                                         {this.props.loggedInUser?.role === 'finance-manager' ? 
-                                        <Button onClick={this.toggleModal} value={i}>Update</Button> : ''}
+                                        <Button color="primary" onClick={this.toggleModal} value={i}>Update</Button> : ''}
                                         </Col>
                                         <ReimbListItem reimbursement={reimb}/>{' '}
                                     </Row>

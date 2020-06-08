@@ -35,7 +35,7 @@ export default class App extends React.Component<any, IAppState> {
         return(
             <div className="App">
             <Jumbotron className='display-1' style={{backgroundColor: '#142074', color: 'white'}}>
-            <h1>Project 1: Expense Reimbursement System</h1>
+            <h1>Project 1: Expense Reimbursement System &nbsp; &nbsp; &nbsp;<img style={{maxWidth:"10%", height:"auto"}} src="https://celebrityclothingline.com/wp-content/uploads/2008/11/money-bag-gene-simmons-logo.jpg"/></h1>
             <h2>{this.state.loggedInUser ? `Welcome, ${this.state.loggedInUser.username}` : 'Please Login'}</h2>
             </Jumbotron>
             <Router>
