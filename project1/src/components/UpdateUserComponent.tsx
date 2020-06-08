@@ -85,16 +85,21 @@ export class UpdateUserComponent extends React.Component<IUpdateUserComponentPro
             role: this.state.newRole,
         }
         try{
-            if(fieldsToUpdate.password !== this.state.confirmPassword){
+            if(fieldsToUpdate.password !== this.state.confirmPassword && this.props.loggedInUser?.role !== 'admin'){
                 throw new Error('Password does not match!')
-            }
-            for(let key in fieldsToUpdate) {
-                // @ts-ignore
-                if(fieldsToUpdate[key] === '') {
-                    throw new Error('Please include all fields');
+                for(let key in fieldsToUpdate) {
+                    // @ts-ignore
+                    if(fieldsToUpdate[key] === '') {
+                        throw new Error('Please include all fields');
+                    }
                 }
             }
-            const updatedUser : User = await updateUser(fieldsToUpdate);
+            let updatedUser: User;
+            if(this.props.loggedInUser?.role === 'admin') {
+                updatedUser = await updateUser({userId: fieldsToUpdate.userId, role: fieldsToUpdate.role})
+            } else {
+                updatedUser = await updateUser(fieldsToUpdate);
+            }
             this.setState({
                 userDisplay: updatedUser,
             });
