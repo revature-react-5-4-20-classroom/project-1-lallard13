@@ -1,7 +1,7 @@
 import React from 'react'
 import { Reimbursement } from '../models/Reimbursement';
 import { submitReimbursement } from '../api/ReimbursementClient';
-import { Form, FormGroup, Label, Input, Button, FormFeedback, Modal, Toast, ToastHeader, ToastBody } from 'reactstrap';
+import { Form, FormGroup, Label, Input, Button, FormFeedback, Modal, Toast, ToastHeader, ToastBody, Jumbotron, Container, Row } from 'reactstrap';
 import { ReimbListItem } from './ReimbListItem';
 import { User } from '../models/User';
 
@@ -11,7 +11,6 @@ import { User } from '../models/User';
 // TODO: add loggedInUser - should fix logout issue
 
 interface ISubmitComponentProps {
-    loggedInUser: User | null,
     history: any,
     match: any,
 }
@@ -21,7 +20,7 @@ interface ISubmitComponentState {
     description: string,
     type: string,
     submitted: boolean,
-    amountWarning: string | null,
+    amountWarning: string,
     reimbursement: Reimbursement | null,
     isError: boolean,
     errorMessage: string,
@@ -36,10 +35,10 @@ export class SubmitComponent extends React.Component<any,ISubmitComponentState> 
             description: '',
             type: 'Other',
             submitted: false,
-            amountWarning: null,
+            amountWarning: '',
             reimbursement: null,
             isError: false,
-            errorMessage: "",
+            errorMessage: '',
         };
     }
 
@@ -48,7 +47,7 @@ export class SubmitComponent extends React.Component<any,ISubmitComponentState> 
         const newAmount: number = e.currentTarget.value;
         if(newAmount > 0) {
             this.setState({
-                amountWarning: null,
+                amountWarning: '',
                 amount: newAmount,
             })
         } else {
@@ -118,67 +117,83 @@ export class SubmitComponent extends React.Component<any,ISubmitComponentState> 
             description: '',
             type: 'Other',
             submitted: false,
-            amountWarning: null,
+            amountWarning: '',
             reimbursement: null,
             isError: false,
             errorMessage: "",
         });
     }
 
-    goHome = () => {
+    goBack = () => {
         console.log('In goHome');
-        this.props.history.push('/home');
+        this.props.history.push('/home/reimbursements/view');
     }
 
     render() {
 
-        return(
-            <div>
-                <h1>Reimbursement Submission Page</h1>
-                <Form onSubmit={this.submitForm}>
-                    <FormGroup>
-                        <Label for="Amount">Amount</Label>
-                        <Input onChange={this.setAmount} value={this.state.amount ? this.state.amount : ""} type="number" id="amount" name="amount" placeholder="Enter any value above 0" invalid={this.state.amountWarning === ""} />
-                        {this.state.amountWarning ? <FormFeedback>{this.state.amountWarning}</FormFeedback> : ''}
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="Description">Description</Label>
-                        <Input onChange={this.setDescription} value={this.state.description} id="Description" type="textarea" placeholder="Enter a description for your reimbursement" />
-                    </FormGroup>
-                    <FormGroup tag="fieldset">
-                        <legend>Reimbursement Type</legend>
-                        <FormGroup check>
-                        <Label check>
-                            <Input onChange={this.setType} value={'Food'} type="radio" name="radio1" />{' '}
-                            Food
-                        </Label>
+        if(!this.state.submitted) {
+            return(
+                <div style={{marginLeft:"50px"}}>
+                    <h1>Reimbursement Submission Page</h1>
+                    <Form onSubmit={this.submitForm}>
+                        <FormGroup>
+                            <Label for="Amount">Amount</Label>
+                            <Input onChange={this.setAmount} value={this.state.amount ? this.state.amount : ""} type="number" id="amount" name="amount" placeholder="Enter any value above 0" invalid={this.state.amountWarning !== ""} />
+                            {this.state.amountWarning ? <FormFeedback>{this.state.amountWarning}</FormFeedback> : ''}
                         </FormGroup>
-                        <FormGroup check>
-                        <Label check>
-                            <Input onChange={this.setType} value={'Travel'} type="radio" name="radio1" />{' '}
-                            Travel
-                        </Label>
+                        <FormGroup>
+                            <Label for="Description">Description</Label>
+                            <Input onChange={this.setDescription} value={this.state.description} id="Description" type="textarea" placeholder="Enter a description for your reimbursement" />
                         </FormGroup>
-                        <FormGroup check>
-                        <Label check>
-                            <Input onChange={this.setType} value={'Other'} type="radio" name="radio1" defaultChecked/>{' '}
-                            Other
-                        </Label>
+                        <FormGroup tag="fieldset">
+                            <legend>Reimbursement Type</legend>
+                            <FormGroup check>
+                            <Label check>
+                                <Input onChange={this.setType} value={'Food'} type="radio" name="radio1" />{' '}
+                                Food
+                            </Label>
+                            </FormGroup>
+                            <FormGroup check>
+                            <Label check>
+                                <Input onChange={this.setType} value={'Travel'} type="radio" name="radio1" />{' '}
+                                Travel
+                            </Label>
+                            </FormGroup>
+                            <FormGroup check>
+                            <Label check>
+                                <Input onChange={this.setType} value={'Other'} type="radio" name="radio1" defaultChecked/>{' '}
+                                Other
+                            </Label>
+                            </FormGroup>
                         </FormGroup>
-                    </FormGroup>
-                    <Button>Submit Reimbursement Request</Button>
-                    <Toast isOpen={this.state.isError}>
-                        <ToastHeader icon="danger" toggle={this.clearError}>Submission Error:</ToastHeader>
-                        <ToastBody>{this.state.errorMessage}</ToastBody>
-                    </Toast>
-                    <Toast isOpen={this.state.submitted}>
-                        <ToastHeader toggle={this.clearAll}>Reimbursement Request Submitted!</ToastHeader>
-                        <ToastBody>
-                            {this.state.reimbursement ? <ReimbListItem reimbursement={this.state.reimbursement}/> : ''}
-                        </ToastBody>
-                    </Toast>
-                </Form>
-            </div>
-        );
+                        <Button>Submit Reimbursement Request</Button>
+                        <Toast isOpen={this.state.isError}>
+                            <ToastHeader icon="danger" toggle={this.clearError}>Submission Error:</ToastHeader>
+                            <ToastBody>{this.state.errorMessage}</ToastBody>
+                        </Toast>
+                        <Toast isOpen={this.state.submitted}>
+                            <ToastHeader toggle={this.clearAll}>Reimbursement Request Submitted!</ToastHeader>
+                            <ToastBody>
+                                {this.state.reimbursement ? <ReimbListItem reimbursement={this.state.reimbursement}/> : ''}
+                            </ToastBody>
+                        </Toast>
+                    </Form>
+                </div>
+            );
+        } else {
+            return(
+                <Jumbotron>
+                    <Container>
+                        <Row>
+                            <h1>Reimbursement request submitted!</h1>
+                        </Row>
+                        <Row>
+                            <Button onClick={this.clearAll}>Submit a new Reimbursement Request</Button>{'   '}
+                            <Button onClick={this.goBack}>View Reimbursements</Button>
+                        </Row>
+                    </Container>
+                </Jumbotron>
+            );
+        }
     }
 }

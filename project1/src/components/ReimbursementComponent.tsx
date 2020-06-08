@@ -3,6 +3,7 @@ import { SubmitComponent } from './SubmitComponent';
 import { UpdateReimbComponent } from './UpdateReimbComponent';
 import { User } from '../models/User';
 import { ReimbListComponent } from './ReimbListComponent';
+import { ReimbListByStatus } from './ReimbListByStatus';
 import { Switch, Route, Redirect } from 'react-router';
 import { Button, Navbar, NavbarBrand, Nav, NavItem } from 'reactstrap';
 import { NavLink } from 'react-router-dom';
@@ -26,30 +27,34 @@ export class ReimbursementComponent extends React.Component<IReimbursementCompon
 
     render() {
         return(
-            <>
-            <h1>This is the reimbursement page!</h1>
+            <div>
             <Redirect to="/home/reimbursements/view"/>
             <Navbar color="light" light expand="md">
-                <NavbarBrand>Home</NavbarBrand>
+                <NavbarBrand>Reimbursements</NavbarBrand>
                 <Nav className = "mr-auto" navbar>
                     <NavItem>
-                        <NavLink to="/home/reimbursements/view">View Reimbursements</NavLink>
+                        <NavLink className="nav-link" activeClassName="active" to="/home/reimbursements/view">View Reimbursements</NavLink>
                     </NavItem>
+                    {this.props.loggedInUser?.role === 'finance-manager' ?
+                        <NavLink className="nav-link" activeClassName="active" to="/home/reimbursements/status">View Reimbursements by Status (Finance Manager)</NavLink> : ''}
                     <NavItem>
-                        <NavLink to="/home/reimbursements/submit">Submit Reimbursement</NavLink>
+                        <NavLink className="nav-link" activeClassName="active" to="/home/reimbursements/submit">Submit Reimbursement</NavLink>
                     </NavItem>
                 </Nav>
             </Navbar>
+            <hr/>
                 <Switch>
-                    <Route path="/home/reimbursements/view">
+                    {/* <Route path="/home/reimbursements/view">
                     <ReimbListComponent loggedInUser={this.props.loggedInUser}/>
-                    </Route>
-                    <Route path="/home/reimbursements/submit" render={(props=>{return <SubmitComponent loggedInUser={this.props.loggedInUser} {...props} />})}/>
+                    </Route> */}
+                    <Route path="/home/reimbursements/view" render = {(props)=>{return <ReimbListComponent loggedInUser={this.props.loggedInUser} {...props} />}} />
+                    <Route path="/home/reimbursements/submit" render={(props)=>{return <SubmitComponent {...props} />}}/>
+                    <Route path="/home/reimbursements/status" render={(props)=>{return <ReimbListByStatus loggedInUser={this.props.loggedInUser} {...props} />}} />
                 </Switch>
                 {/* May make submission a new path */}
                 {/* <SubmitComponent />
                 <UpdateReimbComponent /> */}
-            </>
+            </div>
         );
     }
 }

@@ -21,7 +21,6 @@ export async function login(un: string, pw: string) : Promise<User> {
     } catch(e) {
         console.log(e);
         if(e.response.status === 401) {
-            // TODO: implement FailedLoginError
             throw new FailedLoginError(e.message, un);
         } else {
             throw e;
@@ -49,7 +48,7 @@ export async function submitReimbursement(reimbRequest: Reimbursement) : Promise
     try {
         const response = await reimbursementClient.post('/reimbursements',reimbRequest);
         const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = response.data;
-        return new Reimbursement(reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type);
+        return new Reimbursement(reimbursementId, author, amount, dateParser(dateSubmitted), dateParser(dateResolved), description, resolver, status, type);
     } catch(e) {
         throw(e);
     }
@@ -64,7 +63,7 @@ export async function getReimbursementsByUserId(id: number | undefined) : Promis
             console.log(reimbObj);
             const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = reimbObj;
             console.log(reimbursementId);
-            return new Reimbursement(reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type);
+            return new Reimbursement(reimbursementId, author, amount, dateParser(dateSubmitted), dateParser(dateResolved), description, resolver, status, type);
         })
     } catch(e) {
         throw(e);
@@ -75,10 +74,10 @@ export async function getReimbursementsByUserId(id: number | undefined) : Promis
 // takes status is, returns array of reimbursements
 export async function getReimbursementsByStatus(id: number) : Promise<Reimbursement[]> {
     try {
-        const response = await reimbursementClient.get(`reimbursements/status/statusId/${id}`);
+        const response = await reimbursementClient.get(`reimbursements/status/${id}`);
         return response.data.map((reimbObj: any) => {
-            const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = response.data;
-            return new Reimbursement(reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type);
+            const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = reimbObj;
+            return new Reimbursement(reimbursementId, author, amount, dateParser(dateSubmitted), dateParser(dateResolved), description, resolver, status, type);
         })
     } catch(e) {
         throw(e);
@@ -91,13 +90,13 @@ export async function updateReimbursement(updateFields: any) : Promise<Reimburse
     try {
         const response = await reimbursementClient.patch('/reimbursements',updateFields);
         const {reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type} = response.data;
-        return new Reimbursement(reimbursementId, author, amount, dateSubmitted, dateResolved, description, resolver, status, type);
+        return new Reimbursement(reimbursementId, author, amount, dateParser(dateSubmitted), dateParser(dateResolved), description, resolver, status, type);
     } catch(e) {
         throw(e);
     }
 }
 
-// update user (admin/user???)
+// update user (admin/user)
 // takes update fields, returns updated user
 export async function updateUser(updateFields: any) : Promise<User> {
     try {
@@ -106,6 +105,30 @@ export async function updateUser(updateFields: any) : Promise<User> {
         return new User(userId, username, password, firstName, lastName, email, role);
     } catch(e) {
         // Implement error later
-        throw(e)
+        throw(e);
+    }
+}
+
+// get all users (admin/finance manager)
+// returns an array of all users
+export async function getAllUsers() : Promise<User[]> {
+    try{
+        const response = await reimbursementClient.get('/users');
+        return response.data.map((reimbObj: any) => {
+            const {userId, username, password, firstName, lastName, email, role} = reimbObj;
+            return new User(userId, username, password, firstName, lastName, email, role);
+        });
+    } catch(e) {
+        throw(e);
+    }
+}
+
+// Not a client function: just for parsing incoming dates
+function dateParser(date: string) : string {
+    if(date !== null) {
+        const newDate: string = date.slice(0,10);
+        return newDate;
+    } else {
+        return date;
     }
 }

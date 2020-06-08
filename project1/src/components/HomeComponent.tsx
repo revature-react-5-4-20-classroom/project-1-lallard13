@@ -2,13 +2,14 @@ import React from 'react';
 import { Switch, Route } from 'react-router';
 import { ProfileComponent } from './ProfileComponent';
 import { ReimbursementComponent } from './ReimbursementComponent';
-import {UsersComponent} from './UsersComponent';
-import { Button } from 'reactstrap';
+import { UsersListComponent } from './UsersListComponent';
 import { User } from '../models/User';
 import { NavbarComponent } from './NavbarComponent';
 
 interface IHomeComponentProps {
     loggedInUser: User | null,
+    logoutUser: () => void,
+    updateUser: (u: User) => void,
 }
 
 export class HomeComponent extends React.Component<IHomeComponentProps,any> {
@@ -26,23 +27,21 @@ export class HomeComponent extends React.Component<IHomeComponentProps,any> {
         })
     }
 
-    // Look into nested routing a bit more
     render() {
         return (
-            <>
-                <h1>Hello from home!</h1>
-                <NavbarComponent/>
+            <div>
+                <NavbarComponent loggedInUser={this.props.loggedInUser} logoutUser={this.props.logoutUser}/>
                 <Switch>
                     <Route path="/home/profile"> 
-                        <ProfileComponent loggedInUser={this.props.loggedInUser}/>
+                        <ProfileComponent loggedInUser={this.props.loggedInUser} updateUser={this.props.updateUser}/>
                     </Route>
                     <Route path='/home/reimbursements' render={(props=>{return <ReimbursementComponent loggedInUser={this.props.loggedInUser} {...props} />})}/>
                     {/* This path only accessible for admin and finance-manager */}
                     <Route path="/home/users">
-                        <UsersComponent />
+                        <UsersListComponent loggedInUser={this.props.loggedInUser} updateUser={this.props.updateUser} />
                     </Route>
                 </Switch>
-            </>
+            </div>
         );
     }
 }
